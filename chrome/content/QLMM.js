@@ -4,6 +4,9 @@
  * @date 11-23-2009
  * Licensed under the MIT License
  * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Much of this code is based on peolan's excellent Quake Live Demo Player Firefox add-on
+ * https://addons.mozilla.org/en-US/firefox/addon/14318/
  */
 var QLMM = {
 
