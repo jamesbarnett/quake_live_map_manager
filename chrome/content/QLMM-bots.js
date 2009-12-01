@@ -54,10 +54,10 @@ QLMM.botCommand = function(skill, botCount) {
 	
 	var cmd = "";
 	
-	for (var i = 0; i < gameBots.length; ++i) {
-		cmd += '+addbot ' + gameBots[i].name + ' ' + skill + ' ' + gameBots[i].team +
-		    ' +wait '
+	for (var j = 0; j < gameBots.length; ++j) {
+		cmd += '+addbot ' + gameBots[j].name + ' ' + skill + ' ' + gameBots[j].team +
+		    ' +wait ';
 	}
 	
 	return cmd;
-}
+};

@@ -1,0 +1,60 @@
+The goal of the Quake Live Map Manager is to making playing unofficial Quake 
+Live maps in practice mode simple.  Playing these unofficial maps is possible
+now, but quite cumbersome.  First you must copy the maps to the correct Quake
+Live folder and then set the map file to read only.  Furthermore, if you want
+to play many different unofficial maps, you must be careful to not copy too
+many maps to the folder simultaneously (Some users have reported browser/plugin
+crashes in this situation).  Then you must start a practice match specifying
+all desired game options, then once in game, bring down the console and type
+"/map <mapname>".  The map names are easy to forget, misread, or misspell.
+Inspired by the Greasemonkey script for RAZ3R's training map and peleon's
+excellent Quake Live Demo Player Firefox add-on, I set it to write my own 
+add-on to streamline the process of playing unofficial maps.
+
+
+Step 1:  Get Some Maps 
+
+Here are some links to get you started:
+
+QL Offline Mappacks from Combo
+
+http://www.quakelive.com/forum/showthread.php?t=31033
+
+Strafe Maps from GrafZhL
+
+http://www.quakelive.com/forum/showthread.php?t=39097
+
+RAZ3R's Training Map
+
+http://www.quakelive.com/forum/showthread.php?t=18447
+
+Strafe Map from sprks
+
+http://www.quakelive.com/forum/showthread.php?t=25772
+
+Step 2: Create a folder for all your unofficial Quake Live Maps
+
+Note that this is NOT one of the Quake Live folder's.  I keep mine at
+Desktop\qlmaps. Also, don't create subfolders.  Just dump all the files
+in the same folder.
+
+Step 3: Install the Quake Live Map Manager plugin
+
+It should install automatically.  If you end up downloading it accidentally,
+find the qlmapmngr.xpi file and double click it.  Tell it open with Firefox
+when prompted.  You will need to restart Firefox.
+
+Step 4: Tell the Quake Live Map Manager where your unofficial maps folder is.
+
+From the Firefox menu, select Tools -> Quake Live Map Manager -> Settings and
+browse to the folder containing your Quake Live maps.
+
+Step 5: Play!
+
+Click the "Map Manager" link the Quake Live Map Manager add-on has inserted in
+the Quake Live home page.  Your installed maps will be in a convenient drop down.
+Select your other game options and go!
+
+
+
+

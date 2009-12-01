@@ -54,11 +54,11 @@ QLMM.fileExists = function (f) {
 	file.initWithPath(f);
 
 	return file.exists();
-}
+};
 
 QLMM.debug = function () {
 	QLMM.dQueue.push(arguments);
-}
+};
 
 QLMM.quakeLiveFolder = function() {
     var appDataDir = "";
@@ -94,7 +94,7 @@ QLMM.quakeLiveFolder = function() {
 	QLMM.debug("[QLMM] QL folder at " + qlDir.path + " exists? " + QLMM.fileExists(qlDir.path));
 	
 	return qlDir;
-}
+};
 
 /**
  * init(d, w)
@@ -115,12 +115,12 @@ QLMM.init = function (d, w) {
 	// possibly add checks for new maps here
 	
 	QLMM.run();
-}
+};
 
 QLMM.profilePath = function() {
 	return Components.classes["@mozilla.org/file/directory_service;1"].getService(
 		Components.interfaces.nsIProperties).get("ProfD", Components.interfaces.nsIFile);	
-}
+};
 
 QLMM.extensionPath = function() {
 	var addinID = "qlmapmngr@gmail.com";
@@ -128,7 +128,7 @@ QLMM.extensionPath = function() {
 		Components.interfaces.nsIExtensionManager);
 	
 	return extensionManager.getInstallLocation(addinID).getItemFile(addinID, "/");
-}
+};
 
 QLMM.settingsPath = function() {
 	var file = QLMM.extensionPath();
@@ -140,7 +140,7 @@ QLMM.settingsPath = function() {
 	}
 	
 	return file;
-}
+};
 
 QLMM.writeFile = function(file, data) {
 	var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(
@@ -153,13 +153,13 @@ QLMM.writeFile = function(file, data) {
 	converter.init(foStream, "UTF-8", 0, 0);
 	converter.writeString(data);
 	converter.close();
-}
+};
 
 QLMM.isMapPathSet = function() {
 	var mapPath = QLMM.settingsPath();
 	mapPath.append("maps_path");
 	return QLMM.fileExists(mapPath.path);
-}
+};
 
 QLMM.getMapsPath = function() {
 	var mapPath = QLMM.settingsPath();
@@ -183,7 +183,7 @@ QLMM.getMapsPath = function() {
 	cstream.close(); // this closes fstream
 	
 	return data;
-}
+};
 
 QLMM.getMapList = function(path) {
 	var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
@@ -202,7 +202,7 @@ QLMM.getMapList = function(path) {
 	}
 	
 	return array;
-}
+};
 
 /**
  * Find the path for the extension, e.g.
@@ -246,5 +246,5 @@ QLMM.getFileContent = function(name) {
 	sInputStream.init(inputStream);
 
 	return sInputStream.read(sInputStream.available()) || "";
-}
+};
 

@@ -24,7 +24,7 @@ QLMM.run = function () {
 
 		QLMM.updateDocumentBinds();
 	}
-}
+};
 
 QLMM.updateDocumentBinds = function() {
 	var $ = QLMM.$;
@@ -38,91 +38,93 @@ QLMM.updateDocumentBinds = function() {
 			return;
 		}
 		
-		QLMM.debug("[QLMM] loading QLMM GUI");
+		if (!$('div.qlmm-enabled').length) {
+			QLMM.debug("[QLMM] loading QLMM GUI");
 		
-		$('#qlv_preLogContent').prepend(QLMM.html);
+			$('#qlv_preLogContent').prepend(QLMM.html);
 		
-		// Close button
-		$('#qlmm .close_window').click(function() {
-			QLMM.hideQLMM();
-		});
+			// Close button
+			$('#qlmm .close_window').click(function() {
+				QLMM.hideQLMM();
+			});
 		
-		var mapPath = QLMM.getMapsPath();
-		var maps = QLMM.getMapList(mapPath);
+			var mapPath = QLMM.getMapsPath();
+			var maps = QLMM.getMapList(mapPath);
 		
-		var mapOptions = "";
+			var mapOptions = "";
 		
-		for (var i = 0; i < maps.length; ++i) {
-		    mapOptions += '<option value="' + maps[i].path + '">' + maps[i].leafName + "</option>\n";	
-		}
-		
-		$('#qlmm-game-limit-label').css('display', 'none');
-		
-		$('#qlmm-maps-select').append(mapOptions);
-		
-		$('#qlmm-game-type-select').change(function() {
-			var gameTypeSelect = $('#qlmm-game-type-select')[0];
-			
-			switch (gameTypeSelect.options[gameTypeSelect.selectedIndex].text) {
-				case "Duel":
-					QLMM.duelSelected();
-					break;
-					
-				case "Free For All":
-					QLMM.ffaSelected();
-					break;
-					
-				case "Team Death Match":
-					QLMM.tdmSelected();
-					break;
-				
-				case "Clan Arena":
-					QLMM.caSelected();
-					break;
-					
-				case "Capture The Flag":
-					QLMM.ctfSelected();
-					break;
+			for (var i = 0; i < maps.length; ++i) {
+			    mapOptions += '<option value="' + maps[i].path + '">' + maps[i].leafName + "</option>\n";	
 			}
-		});
 		
-		$('#qlmm-start').click(QLMM.startOfflineMap);
+			$('#qlmm-game-limit-label').css('display', 'none');
+		
+			$('#qlmm-maps-select').append(mapOptions);
+		
+			$('#qlmm-game-type-select').change(function() {
+				var gameTypeSelect = $('#qlmm-game-type-select')[0];
+			
+				switch (gameTypeSelect.options[gameTypeSelect.selectedIndex].text) {
+					case "Duel":
+						QLMM.duelSelected();
+						break;
+					
+					case "Free For All":
+						QLMM.ffaSelected();
+						break;
+					
+					case "Team Death Match":
+						QLMM.tdmSelected();
+						break;
+				
+					case "Clan Arena":
+						QLMM.caSelected();
+						break;
+					
+					case "Capture The Flag":
+						QLMM.ctfSelected();
+						break;
+				}
+			});
+		
+			$('#qlmm-start').click(QLMM.startOfflineMap);
+		}
 	});
-}
+};
 
 QLMM.noGameTypeSelected = function() {
     var $ = QLMM.$;
     $('#qlmm-game-limit-label').css('display', 'none');
     $('#qlmm-game-limit-select').css('display', 'none');	
-}
+};
 
 QLMM.duelSelected = function() {
 	var $ = QLMM.$;
 	$('#qlmm-players-select')[0].selectedIndex = 1;
 	$('#qlmm-players-select').attr('disabled', true);
 	QLMM.fragLimitDropdown();
-}
+};
 
 QLMM.ffaSelected = function() {
     var $ = QLMM.$;
     $('#qlmm-players-select').attr('disabled', false);
 	QLMM.fragLimitDropdown();
-}
+};
 
 QLMM.caSelected = function() {
 	QLMM.$('#qlmm-players-select').attr('disabled', false);
 	QLMM.roundLimitDropdown();
-}
+};
 
 QLMM.tdmSelected = function() {
 	QLMM.$('#qlmm-players-select').attr('disabled', false);
 	QLMM.fragLimitDropdown();
-}
+};
 
 QLMM.ctfSelected = function() {
 	QLMM.$('qlmm-players-select').attr('disabled', false);
 	QLMM.captureLimitDropdown();
-}
+};
 
 QLMM.fragLimitDropdown = function() {
 	var options = '<option value="0">None</option>';
@@ -137,7 +139,7 @@ QLMM.fragLimitDropdown = function() {
 	QLMM.$('#qlmm-game-limit-label').append(limitSelect);
 	QLMM.$('#qlmm-game-limit-label').css('display', 'block');
 	limitSelect.css('display', 'inline');
-}
+};
 
 QLMM.captureLimitDropdown = function() {	
 	var options = '<option value="0">None</option>';
@@ -152,7 +154,7 @@ QLMM.captureLimitDropdown = function() {
 	QLMM.$('#qlmm-game-limit-label').append(limitSelect);
 	QLMM.$('#qlmm-game-limit-label').css('display', 'block');
 	limitSelect.css('display', 'inline');
-}
+};
 
 QLMM.roundLimitDropdown = function() {	
 	var options = '<options value="0">None</option>';
@@ -167,7 +169,7 @@ QLMM.roundLimitDropdown = function() {
 	QLMM.$('#qlmm-game-limit-label').append(limitSelect);
 	QLMM.$('#qlmm-game-limit-label').css('display', 'block');
 	limitSelect.css('display', 'inline');
-}
+};
 
 /**
  * hideQLMM()
@@ -184,7 +186,7 @@ QLMM.startOfflineMap = function(e) {
 	var cmdString = '+com_backgroundDownload 1 +sv_quitOnExitLevel 1 ';
 	cmdString += '+g_gametype ' + gameTypeSelect.options[gameTypeSelect.selectedIndex].value + ' ';
     
-	var mapCmd = ($('#qlmm-cheats-enabled').is(':checked')) ? '+devmap' : '+map'
+	var mapCmd = ($('#qlmm-cheats-enabled').is(':checked')) ? '+devmap' : '+map';
     var mapSelect = $('#qlmm-maps-select')[0];
     var mapName = mapSelect.options[mapSelect.selectedIndex].text.replace('.pk3', '');
 	
@@ -208,7 +210,7 @@ QLMM.startOfflineMap = function(e) {
 	
 	QLMM.debug('[QLMM] launch command: ' + gameCmd);
 	QLMM.win.LaunchGame(gameCmd, true);
-}
+};
 
 QLMM.gameLimitCommand = function() {
 	var $ = QLMM.$;
@@ -226,7 +228,7 @@ QLMM.gameLimitCommand = function() {
 	}
 	
 	return cmd;
-}
+};
 
 QLMM.copyMap = function(map) {
 	var qlDir = QLMM.quakeLiveFolder();
@@ -235,4 +237,4 @@ QLMM.copyMap = function(map) {
 	mapFile.initWithPath(QLMM.getMapsPath());
 	mapFile.append(map);
 	mapFile.copyTo(qlDir, map);	
-}
+};
