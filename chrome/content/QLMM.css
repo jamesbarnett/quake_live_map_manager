@@ -1,0 +1,66 @@
+.overlayfix { margin-left: -10px; margin-top: -10px; }
+
+#qlmm {
+  padding:40px 15px;
+  position:relative;
+  width:900px;
+}
+
+#qlmm h1 {
+  font-size: 32px;
+  margin-left: 25px;	
+}
+
+#qlmm h1, h2, h3 {
+  font-family: Arial, sans-serif;	
+}
+
+#qlmm h3 {
+  font-size: 12px;
+  margin-left: 50px;
+  letter-spacing: 3px;
+}
+
+#qlmm-launcher-form {
+  padding-top: 25px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+  width: 275px;
+  margin-left: 310px;	
+}
+
+#qlmm label {
+	display: block;
+	padding-top: 4px;
+	height: 16px;
+}
+
+#qlmm select {
+	float: right;
+	width: 160px;
+}
+
+#qlmm input#qlmm-cheats-enabled {
+	float: right;
+}
+
+#qlmm-start {
+  margin-top: 4px;	
+  height: 53px;
+  width: 53px;
+  background: url(/images/start_match/btn_play_v2009112002.0.png) no-repeat scroll 0 0;
+  float: right;
+}
+
+.red {
+	color: red;
+}
+
+.white {
+	color: white;
+}
+
+.blue {
+	color: blue;
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="text/javascript" src="QLMM.js"></script>
+  <script type="text/javascript" src="QLMM-bots.js"></script>
+  <script type="text/javascript" src="QLMM-GUI.js"></script>
+  <script type="text/javascript" src="QLMM-init.js"></script>
+  <menupopup id="menu_ToolsPopup">
+	<script type="application/x-javascript" src="chrome://quake_live_map_manager/content/menu.js"></script>
+    <menu label="Quake Live Map Manager" insertbefore="sanitizeSeparator">
+	  <menupopup>
+        <menuitem label="Settings" 
+                  oncommand="openSettingsFileDialog();" accesskey="i"/>
+      </menupopup>
+    </menu>
+  </menupopup>
+</overlay>
