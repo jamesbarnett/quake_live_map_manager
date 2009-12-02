@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>qlmapmngr@gmail.com</em:id>
-    <em:version>1.0</em:version>
+    <em:version>0.1.0</em:version>
     <em:type>2</em:type>
    
     <!-- Target Application this extension can install into, 
@@ -19,9 +19,8 @@
     </em:targetApplication>
    
     <!-- Front End MetaData -->
-    <em:name>quake_live_map_manager</em:name>
+    <em:name>Quake Live Map Manager</em:name>
     <em:description>Add-on for managing Quake Live offline maps</em:description>
     <em:creator>immut4ble_r3f</em:creator>
-    <em:homepageURL>http://www.example.com/</em:homepageURL>
   </Description>
 </RDF>
