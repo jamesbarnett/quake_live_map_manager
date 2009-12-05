@@ -73,7 +73,7 @@ QLMM.quakeLiveFolder = function() {
 			.get("AppData", Components.interfaces.nsIFile)
 			.path.replace(/Roaming/, ''); // Replace Vista/Win7 "Roaming" path in AppData
 
-		aPath = "id Software\\quakelive\\home\\baseq3\\";
+		aPath = "id Software\\quakelive\\baseq3\\";
 
 		// Vista/Win7
 		if (navigator.userAgent.match(/NT 6\./)) {
@@ -86,7 +86,7 @@ QLMM.quakeLiveFolder = function() {
 	catch (e) {
 		navigator.userAgent.match(/Linux/) ?
 		// Linux
-		appDataDir = "~/.quakelive/quakelive/home/baseq3/":
+		appDataDir = "~/.quakelive/quakelive/baseq3/":
 		// Mac
 		appDataDir = "~/Library/Application Support/QuakeLive/quakelive/baseq3/";
 		
