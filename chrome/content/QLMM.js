@@ -9,7 +9,6 @@
  * https://addons.mozilla.org/en-US/firefox/addon/14318/
  */
 var QLMM = {
-
 	// Cache and local variables
 	$: undefined,
 	doc: undefined,
@@ -25,6 +24,34 @@ var QLMM = {
 		pathSeperator: "\\"
 	}
 };
+
+
+QLMM.Pk3ToMapHash = function() {
+	this.length = 0;
+	this.items = new Array();
+	
+	this.getItem = function(key) {
+		return this.items[key];
+	}
+	
+	this.insertItem = function(key, val) {
+		var tmp;
+		
+		if (typeof(val) !== 'undefined') {
+			if (typeof(this.items[key]) === 'undefined') {
+				this.length++;
+			}
+			else {
+				tmp = this.items[key];
+			}
+			
+			this.items[key] = val;
+		}
+		
+		return tmp;
+	}
+};
+
 
 /**
  * Self-invoking function that'll output debug messages when the console is
@@ -44,6 +71,7 @@ var QLMM = {
 	window.setTimeout(arguments.callee, 250);
 })();
 
+
 /**
  * fileExists(f)
  * Checks if the path/file exists
@@ -59,9 +87,15 @@ QLMM.fileExists = function (f) {
 	return file.exists();
 };
 
+
 QLMM.debug = function () {
-	QLMM.dQueue.push(arguments);
+	//QLMM.dQueue.push(arguments);
+	var win = QLMM.win;
+	if (win && win.console && win.console.log) {	
+		win.console.log.apply(win.console, arguments);
+	}
 };
+
 
 QLMM.quakeLiveFolder = function() {
     var appDataDir = "";
@@ -99,6 +133,7 @@ QLMM.quakeLiveFolder = function() {
 	return qlDir;
 };
 
+
 /**
  * init(d, w)
  * Initiates QLMM by running the underlying functions before triggering 'run()'.
@@ -120,10 +155,12 @@ QLMM.init = function (d, w) {
 	QLMM.run();
 };
 
+
 QLMM.profilePath = function() {
 	return Components.classes["@mozilla.org/file/directory_service;1"].getService(
 		Components.interfaces.nsIProperties).get("ProfD", Components.interfaces.nsIFile);	
 };
+
 
 QLMM.extensionPath = function() {
 	var addinID = "qlmapmngr@gmail.com";
@@ -133,17 +170,26 @@ QLMM.extensionPath = function() {
 	return extensionManager.getInstallLocation(addinID).getItemFile(addinID, "/");
 };
 
+
 QLMM.settingsPath = function() {
 	var file = QLMM.extensionPath();
 	
 	file.append("settings");
 	
-	if (!file.exists() || !file.isDirectory()) {
-		file.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
-	}
-	
 	return file;
 };
+
+
+QLMM.mapConfigsPath = function() {
+	let file = QLMM.settingsPath();
+	
+	file.append('mapconfigs');
+	
+	QLMM.debug("[QLMM] map configs path: " + file.path);
+	
+	return file;
+}
+
 
 QLMM.writeFile = function(file, data) {
 	var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(
@@ -158,11 +204,13 @@ QLMM.writeFile = function(file, data) {
 	converter.close();
 };
 
+
 QLMM.isMapPathSet = function() {
 	var mapPath = QLMM.settingsPath();
 	mapPath.append("maps_path");
 	return QLMM.fileExists(mapPath.path);
 };
+
 
 QLMM.getMapsPath = function() {
 	var mapPath = QLMM.settingsPath();
@@ -188,6 +236,7 @@ QLMM.getMapsPath = function() {
 	return data;
 };
 
+
 QLMM.getMapList = function(path) {
 	var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
 		Components.interfaces.nsILocalFile);
@@ -207,6 +256,39 @@ QLMM.getMapList = function(path) {
 	return array;
 };
 
+
+QLMM.getInstalledMapLaunchNames = function() {
+	var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
+		Components.interfaces.nsILocalFile);
+	var path = QLMM.getMapsPath();
+	var pk3list = QLMM.getMapList(path);
+	var configFile = Components.classes["@mozilla.org/file/local;1"].createInstance(
+		Components.interfaces.nsILocalFile);
+	var mapLaunchNames = new Array();
+	
+	var pk3ToMaps = new QLMM.Pk3ToMapHash();
+		
+	for (var i = 0; i < pk3list.length; i++) {
+		if (pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt") !== 'lsdm17_blue_textures.pk3.maps.txt')	{
+			var contents = QLMM.getMapConfigFileContent(pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt"));
+	
+			pk3ToMaps.insertItem(pk3list[i].leafName, new Array());
+			
+			// QLMM.debug("The contents are: " + contents);
+			var maps = QLMM.chomp(contents).split("\n");
+	
+			// QLMM.debug("The maps are: " + maps);
+			for (var j = 0; j < maps.length; j++) {
+				QLMM.debug('Adding map ' + maps[j] + ' from pk3 ' + pk3list[i].leafName);
+				pk3ToMaps.getItem(pk3list[i].leafName).push(maps[j]);
+			}
+		}
+	}
+	
+	return pk3ToMaps;
+}
+
+
 /**
  * Find the path for the extension, e.g.
  * /home/user/.mozilla/firefox/<profile>/extensions/qlmapmngr@gmail.com or equivalent.
@@ -225,6 +307,7 @@ QLMM.directory.chrome = (function () {
 
 	return path;
 })();
+
 
 QLMM.getFileContent = function(name) {
 	var path = QLMM.directory.chrome, file, inputStream, sInputStream;
@@ -250,4 +333,38 @@ QLMM.getFileContent = function(name) {
 
 	return sInputStream.read(sInputStream.available()) || "";
 };
+
+
+QLMM.getMapConfigFileContent = function(name) {
+	var path = QLMM.mapConfigsPath(), file, inputStream, sInputStream;
+
+	// Create the file and instantiate it with the path built above
+	file = Components.classes["@mozilla.org/file/local;1"].createInstance(
+		Components.interfaces.nsILocalFile);
+	QLMM.debug("The path: " + path.path);
+	file.initWithPath(path.path);
+	file.append(name);
+	
+	QLMM.debug("[QLMM] opening map config file: " + file.path);
+	
+	// Try to open up a file stream for the file
+	inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
+		Components.interfaces.nsIFileInputStream);
+
+	// Append the file to the input stream
+	inputStream.init(file, 0x01, 00004, null);
+
+	// Finally *phew*, read the contents
+	sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
+		Components.interfaces.nsIScriptableInputStream);
+
+	sInputStream.init(inputStream);
+
+	return sInputStream.read(sInputStream.available()) || "";
+};
+
+
+QLMM.chomp = function(raw_text) {
+    return raw_text.replace(/(\n|\r)+$/, '');
+}
 
