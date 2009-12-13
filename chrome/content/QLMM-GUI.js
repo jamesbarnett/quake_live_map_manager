@@ -49,7 +49,6 @@ QLMM.updateDocumentBinds = function() {
 				QLMM.hideQLMM();
 			});
 		
-		    // TODO: show launchable names heres
 			var mapPath = QLMM.getMapsPath();
 			var pk3ToMaps = QLMM.getInstalledMapLaunchNames();
 			var mapOptions = "";
