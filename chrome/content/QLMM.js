@@ -269,7 +269,8 @@ QLMM.getInstalledMapLaunchNames = function() {
 	var pk3ToMaps = new QLMM.Pk3ToMapHash();
 		
 	for (var i = 0; i < pk3list.length; i++) {
-		if (pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt") !== 'lsdm17_blue_textures.pk3.maps.txt')	{
+		if (pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt") !== 'lsdm17_blue_textures.pk3.maps.txt' &&
+		    pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt") !== 'lvl_twctf.maps.txt')	{
 			var contents = QLMM.getMapConfigFileContent(pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt"));
 	
 			pk3ToMaps.insertItem(pk3list[i].leafName, new Array());
