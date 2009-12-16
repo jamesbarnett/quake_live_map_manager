@@ -4,10 +4,15 @@
 			<a class="close_window fr" title="Close Map Manager"></a>
 			<h1>Quake Live Map Manager</h1>
 			<h3>by <span class="red">immut4ble</span><span class="white">_</span><span class="blue">r3f</blue></h3>
+			<div id="qlmm-header">	
+				<span id="qlmm-standard-link"><a href="javascript:;" onclick="QLMM.showStandardForm()">Standard</a></span> 
+				| <span id="qlmm-advanced-link"><a href="javascript:;" onclick="QLMM.showAdvancedForm()">Advanced</a></span>
+				<span id="qlmm-map-count"></span>
+			</div>	
 			<div id="qlmm-launcher-form">	
 				<label id="qlmm-game-type-label">Game Type
 					<select name="game-type" id="qlmm-game-type-select">
-						<option value="2">Single Player</option>
+						<option value="-1"></option>
 						<option value="1">Duel</option>
 						<option value="0">Free For All</option>
 						<option value="3">Team Death Match</option>
@@ -55,12 +60,34 @@
 					<select id="qlmm-game-limit-select">
 					</select>
 				</label>
-				<label id="qlmm-cheats-enabled-label">
-					Enable Cheats
-					<input type="checkbox" name="cheats-enabled" id="qlmm-cheats-enabled" value="1"/>
+				<div id="qlmm-advanced-view">
+					<label id="qlmm-bot-thinktime-label">
+						Bot Think Time
+						<input type="text" name="bot-thinktime" id="qlmm-bot-thinktime" class="text"/>
+					</label>
+					<label id="qlmm-sv-fps-label">
+						Server FPS
+						<input type="text" name="sv-fps" id="qlmm-sv-fps" class="text"/>
+					</label>
+					<label id="qlmm-cheats-enabled-label">
+						Enable Cheats
+						<input type="checkbox" name="cheats-enabled" id="qlmm-cheats-enabled" value="1" class="checkbox"/>
+					</label>
+					<label id="qlmm-bot-challenge-label">
+						Bot Challenge
+						<input type="checkbox" name="bot-challenge" id="qlmm-bot-challenge" value="1" class="checkbox"/>
+					</label>
+					<label id="qlmm-bot-rocketjump-label">
+						Bot Rocket Jump
+						<input type="checkbox" name="bot-rocketjump" id="qlmm-bot-rocketjump" value="1" class="checkbox"/>
+					<label id="qlmm-allow-kill-label">
+						Allow Kill
+						<input type="checkbox" name="allow-kill" id="qlmm-allow-kill" value="1" class="checkbox"/>
+					</label>
+				</div>
 				<div id="qlmm-start">
 					<a id="qlmm-start-button" href="javascript:;"></a>
-				</div>
+				</div>	
 			</div>				
 		</div>
 	</div>

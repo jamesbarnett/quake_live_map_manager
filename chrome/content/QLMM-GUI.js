@@ -44,6 +44,8 @@ QLMM.updateDocumentBinds = function() {
 		
 			$('#qlv_preLogContent').prepend(QLMM.html);
 		
+			QLMM.showStandardForm();
+			
 			// Close button
 			$('#qlmm .close_window').click(function() {
 				QLMM.hideQLMM();
@@ -52,13 +54,17 @@ QLMM.updateDocumentBinds = function() {
 			var mapPath = QLMM.getMapsPath();
 			var pk3ToMaps = QLMM.getInstalledMapLaunchNames();
 			var mapOptions = "";
+			var mapCount = 0;
 			
 			for (var key in pk3ToMaps.items) {
 				for (var i = 0; i < pk3ToMaps.getItem(key).length; i++) {
 					mapOptions += '<option value="' + key + '[' + pk3ToMaps.getItem(key)[i] + ']">' + 
 						pk3ToMaps.getItem(key)[i] + "</option>\n";
+					mapCount++;	
 				}
 			}
+			
+			$('#qlmm-map-count').text('Maps Installed: ' + mapCount);
 			
 			$('#qlmm-game-limit-label').css('display', 'none');
 		
@@ -169,7 +175,7 @@ QLMM.captureLimitDropdown = function() {
 
 
 QLMM.roundLimitDropdown = function() {	
-	var options = '<options value="0">None</option>';
+	var options = '<option value="0">None</option>';
 	for (var i = 6; i <= 12; i += 2) {
 		options += '<option value="' + i + '">' + i + ' Rounds</option>';
 	}
@@ -221,6 +227,7 @@ QLMM.startOfflineMap = function(e) {
 	var botCount = $('#qlmm-players-select').val();
 	var botCmd = QLMM.botCommand(skill, botCount);
 	
+	cmdString += QLMM.processAdvancedOptions();
 	cmdString += botCmd;
 	cmdString += ' +wait';
 	
@@ -228,6 +235,37 @@ QLMM.startOfflineMap = function(e) {
 	
 	QLMM.debug('[QLMM] launch command: ' + gameCmd);
 	QLMM.win.LaunchGame(gameCmd, true);
+};
+
+
+QLMM.processAdvancedOptions = function() {
+	var $ = QLMM.$;
+	var options = ' ';
+	
+	if ($('#qlmm-advanced-view').css('display') === 'block') {
+		if ($('#qlmm-bot-thinktime').val() !== '') {
+			options += '+bot_thinktime ' + $('#qlmm-bot-thinktime').val() + ' ';
+		}
+		
+		if ($('#qlmm-sv-fps').val() !== '') {
+			// min 10, max 125
+			options += '+sv_fps ' + $('#qlmm-sv-fps').val() + ' ';
+		}
+		
+		if ($('#qlmm-bot-challenge').is(':checked')) {
+			options += '+bot_challenge 1 ';
+		}
+		
+		if ($('#qlmm-bot-rocketjump').is(':checked')) {
+			options += '+bot_rocketjump 1 ';
+		}
+		
+		if ($('#qlmm-allow-kill').is(':checked')) {
+			options += '+g_allowkill 1 ';
+		}
+	}
+	
+	return options;
 };
 
 
@@ -248,6 +286,23 @@ QLMM.gameLimitCommand = function() {
 	
 	return cmd;
 };
+
+
+QLMM.showStandardForm = function() {
+	var $ = QLMM.$;
+	$('#qlmm-standard-link').html('Standard');
+	$('#qlmm-advanced-link').html('<a href="javascript:;" onclick="QLMM.showAdvancedForm()">Advanced</a>');	
+	$('#qlmm-advanced-view').css('display', 'none');
+}
+
+
+QLMM.showAdvancedForm = function() {
+	var $ = QLMM.$;
+	$('#qlmm-advanced-link').html('Advanced');
+	$('#qlmm-standard-link').html('<a href="javascript:;" onclick="QLMM.showStandardForm()">Standard</a>');
+	$('#qlmm-advanced-view').css('display', 'block');
+}
+
 
 QLMM.copyMap = function(map) {
 	var qlDir = QLMM.quakeLiveFolder();
