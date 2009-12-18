@@ -185,8 +185,6 @@ QLMM.mapConfigsPath = function() {
 	
 	file.append('mapconfigs');
 	
-	QLMM.debug("[QLMM] map configs path: " + file.path);
-	
 	return file;
 }
 
@@ -275,12 +273,9 @@ QLMM.getInstalledMapLaunchNames = function() {
 	
 			pk3ToMaps.insertItem(pk3list[i].leafName, new Array());
 			
-			// QLMM.debug("The contents are: " + contents);
 			var maps = QLMM.chomp(contents).split("\n");
 	
-			// QLMM.debug("The maps are: " + maps);
 			for (var j = 0; j < maps.length; j++) {
-				QLMM.debug('Adding map ' + maps[j] + ' from pk3 ' + pk3list[i].leafName);
 				pk3ToMaps.getItem(pk3list[i].leafName).push(maps[j]);
 			}
 		}
@@ -342,7 +337,7 @@ QLMM.getMapConfigFileContent = function(name) {
 	// Create the file and instantiate it with the path built above
 	file = Components.classes["@mozilla.org/file/local;1"].createInstance(
 		Components.interfaces.nsILocalFile);
-	QLMM.debug("The path: " + path.path);
+
 	file.initWithPath(path.path);
 	file.append(name);
 	

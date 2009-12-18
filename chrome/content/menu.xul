@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="text/javascript" src="QLMM.js"></script>
+  <script type="text/javascript" src="QLMM-maps.js"></script>
   <script type="text/javascript" src="QLMM-bots.js"></script>
   <script type="text/javascript" src="QLMM-GUI.js"></script>
   <script type="text/javascript" src="QLMM-init.js"></script>

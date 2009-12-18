@@ -19,7 +19,7 @@ QLMM.run = function () {
 	else if ($('#qlv_userInfo .WelcomeText').get(0) && !$qlmm.length) {
 		QLMM.debug("[QLMM] Content seems loaded, we can add the QLMM GUI");
 		$(QLMM.style).appendTo('head');
-
+			
 		$('#qlv_topLinks').prepend('<a id="qlmm-menu-link" href="javascript:;">Map Manager</a> | ');
 
 		QLMM.updateDocumentBinds();
@@ -53,15 +53,27 @@ QLMM.updateDocumentBinds = function() {
 		
 			var mapPath = QLMM.getMapsPath();
 			var pk3ToMaps = QLMM.getInstalledMapLaunchNames();
-			var mapOptions = "";
 			var mapCount = 0;
+			var maps = new Array();
 			
 			for (var key in pk3ToMaps.items) {
 				for (var i = 0; i < pk3ToMaps.getItem(key).length; i++) {
-					mapOptions += '<option value="' + key + '[' + pk3ToMaps.getItem(key)[i] + ']">' + 
-						pk3ToMaps.getItem(key)[i] + "</option>\n";
+					maps.push(new QLMM.map(key, pk3ToMaps.getItem(key)[i]))
 					mapCount++;	
 				}
+			}
+			
+			// sort by bsp name
+			maps.sort(function(m1, m2) {
+				return (m1.bsp.toLowerCase() < m2.bsp.toLowerCase()) ? 
+					-1 : (m1.bsp.toLowerCase() > m2.bsp.toLowerCase() ? 1 : 0);
+			});
+			
+			var mapOptions = "";
+			
+			for (var j = 0; j < mapCount; j++) {
+				mapOptions += '<option value="' + maps[j].pk3 + '[' + maps[j].bsp + ']">' + 
+					maps[j].bsp + "</option>\n";
 			}
 			
 			$('#qlmm-map-count').text('Maps Installed: ' + mapCount);
@@ -74,6 +86,10 @@ QLMM.updateDocumentBinds = function() {
 				var gameTypeSelect = $('#qlmm-game-type-select')[0];
 			
 				switch (gameTypeSelect.options[gameTypeSelect.selectedIndex].text) {
+					case "Single Player":
+						QLMM.singlePlayerSelected();
+						break;
+						
 					case "Duel":
 						QLMM.duelSelected();
 						break;
@@ -95,17 +111,21 @@ QLMM.updateDocumentBinds = function() {
 						break;
 				}
 			});
-		
+			
 			$('#qlmm-start').click(QLMM.startOfflineMap);
 		}
 	});
 };
 
 
-QLMM.noGameTypeSelected = function() {
+QLMM.singlePlayerSelected = function() {
     var $ = QLMM.$;
     $('#qlmm-game-limit-label').css('display', 'none');
-    $('#qlmm-game-limit-select').css('display', 'none');	
+    $('#qlmm-game-limit-select').css('display', 'none');
+	$('#qlmm-players-select')[0].selectedIndex = 1;
+	$('#qlmm-players-select').attr('disable', true);
+	$('#qlmm-game-limit-label').css('display', 'none');
+	$('#qlmm-game-limit-select').css('display', 'none');
 };
 
 
@@ -202,6 +222,9 @@ QLMM.hideQLMM = function () {
 
 QLMM.startOfflineMap = function(e) {
 	var $ = QLMM.$;
+	
+	if (!QLMM.validateForm()) return false;
+	
 	var gameTypeSelect = $('#qlmm-game-type-select')[0];
 	var cmdString = '+com_backgroundDownload 1 +sv_quitOnExitLevel 1 ';
 	cmdString += '+g_gametype ' + gameTypeSelect.options[gameTypeSelect.selectedIndex].value + ' ';
@@ -293,7 +316,7 @@ QLMM.showStandardForm = function() {
 	$('#qlmm-standard-link').html('Standard');
 	$('#qlmm-advanced-link').html('<a href="javascript:;" onclick="QLMM.showAdvancedForm()">Advanced</a>');	
 	$('#qlmm-advanced-view').css('display', 'none');
-}
+};
 
 
 QLMM.showAdvancedForm = function() {
@@ -301,7 +324,32 @@ QLMM.showAdvancedForm = function() {
 	$('#qlmm-advanced-link').html('Advanced');
 	$('#qlmm-standard-link').html('<a href="javascript:;" onclick="QLMM.showStandardForm()">Standard</a>');
 	$('#qlmm-advanced-view').css('display', 'block');
-}
+};
+
+
+QLMM.validateForm = function() {
+	var $ = QLMM.$;
+	
+	var errorMessage = '';
+	var thinktime = parseInt($('#qlmm-bot-thinktime').val());
+	var serverFps = parseInt($('#qlmm-sv-fps').val());
+	
+	if (thinktime > 200 || thinktime < 1) {
+		errorMessage += "Bot Thinktime must be between 1 and 200.\n";
+	}
+	
+	if (serverFps > 125 || serverFps < 10) {
+		errorMessage += "Server FPS must be between 10 and 125.\n";
+	}
+	
+	var isValid = errorMessage === '';
+	
+	if (!isValid) {
+		alert(errorMessage);
+	}
+	
+	return isValid;
+};
 
 
 QLMM.copyMap = function(map) {
@@ -312,3 +360,4 @@ QLMM.copyMap = function(map) {
 	mapFile.append(map);
 	mapFile.copyTo(qlDir, map);	
 };
+
