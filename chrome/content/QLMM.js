@@ -68,7 +68,7 @@ QLMM.Pk3ToMapHash = function() {
 		}
 	}
 
-	window.setTimeout(arguments.callee, 250);
+	window.setTimeout(arguments.callee, 125);
 })();
 
 
@@ -89,11 +89,11 @@ QLMM.fileExists = function (f) {
 
 
 QLMM.debug = function () {
-	//QLMM.dQueue.push(arguments);
-	var win = QLMM.win;
+	QLMM.dQueue.push(arguments);
+	/*var win = QLMM.win;
 	if (win && win.console && win.console.log) {	
 		win.console.log.apply(win.console, arguments);
-	}
+	}*/
 };
 
 
@@ -182,7 +182,7 @@ QLMM.settingsPath = function() {
 
 QLMM.mapConfigsPath = function() {
 	let file = QLMM.settingsPath();
-	
+						
 	file.append('mapconfigs');
 	
 	return file;
@@ -204,9 +204,9 @@ QLMM.writeFile = function(file, data) {
 
 
 QLMM.isMapPathSet = function() {
-	var mapPath = QLMM.settingsPath();
-	mapPath.append("maps_path");
-	return QLMM.fileExists(mapPath.path);
+	var mapsPath = QLMM.getPrefValue("maps_path");
+	
+	return mapsPath !== '';
 };
 
 
@@ -289,7 +289,7 @@ QLMM.getInstalledMapLaunchNames = function() {
  * Find the path for the extension, e.g.
  * /home/user/.mozilla/firefox/<profile>/extensions/qlmapmngr@gmail.com or equivalent.
  */
-QLMM.directory.chrome = (function () {
+QLMM.directory.chrome = function () {
 	// Get initial path to the QLDP extension
 	var path = Components.classes["@mozilla.org/extensions/manager;1"]
 		.getService(Components.interfaces.nsIExtensionManager)
@@ -302,61 +302,76 @@ QLMM.directory.chrome = (function () {
 	path = path + pathSeperator + "content" + pathSeperator;
 
 	return path;
-})();
+}();
 
 
-QLMM.getFileContent = function(name) {
-	var path = QLMM.directory.chrome, file, inputStream, sInputStream;
+QLMM.getFileContent = function() {
+	var path = QLMM.directory.chrome;
+	
+	return function(name) {
+		var file, inputStream, sInputStream;
 
-	// Create the file and instantiate it with the path built above
-	file = Components.classes["@mozilla.org/file/local;1"].createInstance(
-		Components.interfaces.nsILocalFile);
+		// Create the file and instantiate it with the path built above
+		file = Components.classes["@mozilla.org/file/local;1"].createInstance(
+			Components.interfaces.nsILocalFile);
 
-	file.initWithPath(path + name);
+		file.initWithPath(path + name);
 
-	// Try to open up a file stream for the file
-	inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
-		Components.interfaces.nsIFileInputStream);
+		// Try to open up a file stream for the file
+		inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
+			Components.interfaces.nsIFileInputStream);
 
-	// Append the file to the input stream
-	inputStream.init(file, 0x01, 00004, null);
+		// Append the file to the input stream
+		inputStream.init(file, 0x01, 00004, null);
 
-	// Finally *phew*, read the contents
-	sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
-		Components.interfaces.nsIScriptableInputStream);
+		// Finally *phew*, read the contents
+		sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
+			Components.interfaces.nsIScriptableInputStream);
 
-	sInputStream.init(inputStream);
+		sInputStream.init(inputStream);
 
-	return sInputStream.read(sInputStream.available()) || "";
+		return sInputStream.read(sInputStream.available()) || "";
+	}
+}();
+
+QLMM.getMapConfigFileContent = function() {
+	var path = QLMM.mapConfigsPath();
+		
+	return function(name) {
+		// Create the file and instantiate it with the path built above
+		var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
+			Components.interfaces.nsILocalFile);
+	
+		file.initWithPath(path.path);
+		file.append(name);
+	
+		QLMM.debug("[QLMM] opening map config file: " + file.path);
+
+		// Try to open up a file stream for the file
+		var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
+			Components.interfaces.nsIFileInputStream);
+		
+		// Append the file to the input stream
+		inputStream.init(file, 0x01, 00004, null);
+		
+		// Finally *phew*, read the contents
+		var sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
+				Components.interfaces.nsIScriptableInputStream);
+				
+		sInputStream.init(inputStream);
+
+		return sInputStream.read(sInputStream.available()) || "";
+	}
+}();
+
+
+QLMM.loadLastGame = function() {
+	// TODO: load last game and map if exits
 };
 
 
-QLMM.getMapConfigFileContent = function(name) {
-	var path = QLMM.mapConfigsPath(), file, inputStream, sInputStream;
-
-	// Create the file and instantiate it with the path built above
-	file = Components.classes["@mozilla.org/file/local;1"].createInstance(
-		Components.interfaces.nsILocalFile);
-
-	file.initWithPath(path.path);
-	file.append(name);
-	
-	QLMM.debug("[QLMM] opening map config file: " + file.path);
-	
-	// Try to open up a file stream for the file
-	inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
-		Components.interfaces.nsIFileInputStream);
-
-	// Append the file to the input stream
-	inputStream.init(file, 0x01, 00004, null);
-
-	// Finally *phew*, read the contents
-	sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
-		Components.interfaces.nsIScriptableInputStream);
-
-	sInputStream.init(inputStream);
-
-	return sInputStream.read(sInputStream.available()) || "";
+QLMM.saveGameOptions = function() {
+	// TODO: save map, bsp and game options
 };
 
 
@@ -364,3 +379,42 @@ QLMM.chomp = function(raw_text) {
     return raw_text.replace(/(\n|\r)+$/, '');
 }
 
+
+/**
+ * setPrefValue(preference, value)
+ * Try to set the preference value from the extensions branch in Firefox.
+ */
+QLMM.setPrefValue = function(pref, val) {
+	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(
+		Components.interfaces.nsIPrefService);
+	var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(
+		Components.interfaces.nsISupportsString);
+
+	prefs = prefs.getBranch("extensions.qlmm.");
+	str.data = val;
+
+	try {
+		prefs.setComplexValue(pref, Components.interfaces.nsISupportsString, str);
+	}
+	catch (e) {}
+};
+
+
+/**
+ * getPrefValue(preference)
+ * Try to get the preference value from the extensions branch in Firefox.
+ * @returns the value or an empty string
+ */
+QLMM.getPrefValue = function(pref) {
+	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(
+		Components.interfaces.nsIPrefService), retVal = "";
+
+	prefs = prefs.getBranch("extensions.qlmm.");
+
+	try {
+		retVal = prefs.getComplexValue(pref, Components.interfaces.nsISupportsString).data;
+	}
+	catch (e) {}
+
+	return retVal || "";
+};

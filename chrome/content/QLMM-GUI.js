@@ -4,6 +4,7 @@
 QLMM.style = "<style type=\"text/css\">" + QLMM.getFileContent("QLMM.css") + '</style>';
 QLMM.html = QLMM.getFileContent("QLMM.html");
 
+
 /**
  * run()
  * Will initiate the injection of the actual GUI, position the elements and so

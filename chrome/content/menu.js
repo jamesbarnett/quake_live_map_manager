@@ -3,7 +3,7 @@
  * @author immut4ble_r3f
  * @date 2009-11-17
  */
-function openSettingsFileDialog() {
+QLMM.openSettingsFileDialog = function() {
     const nsIFilePicker = Components.interfaces.nsIFilePicker;
     
     var filePicker = Components.classes["@mozilla.org/filepicker;1"].createInstance(
@@ -13,9 +13,7 @@ function openSettingsFileDialog() {
     
     var response = filePicker.show();
     
-    if (response == nsIFilePicker.returnOK || response == nsIFilePicker.returnReplace) {
-		var file = QLMM.settingsPath();
-		file.append("maps_path");
-		QLMM.writeFile(file, filePicker.file.path);
+    if (response == nsIFilePicker.returnOK || response == nsIFilePicker.returnReplace) {		
+		QLMM.setPrefValue("maps_path", filePicker.file.path);
     }
 }

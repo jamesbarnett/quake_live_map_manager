@@ -10,7 +10,7 @@
     <menu label="Quake Live Map Manager" insertbefore="sanitizeSeparator">
 	  <menupopup>
         <menuitem label="Settings" 
-                  oncommand="openSettingsFileDialog();" accesskey="i"/>
+                  oncommand="QLMM.openSettingsFileDialog();" accesskey="i"/>
       </menupopup>
     </menu>
   </menupopup>
