@@ -3,10 +3,11 @@
   <script type="text/javascript" src="QLMM.js"></script>
   <script type="text/javascript" src="QLMM-maps.js"></script>
   <script type="text/javascript" src="QLMM-bots.js"></script>
+  <script type="text/javascript" src="QLMM-game.js"></script>
   <script type="text/javascript" src="QLMM-GUI.js"></script>
   <script type="text/javascript" src="QLMM-init.js"></script>
   <menupopup id="menu_ToolsPopup">
-	<script type="application/x-javascript" src="chrome://quake_live_map_manager/content/menu.js"></script>
+	<script type="application/x-javascript" src="chrome://quake_live_map_manager/content/QLMM-menu.js"></script>
     <menu label="Quake Live Map Manager" insertbefore="sanitizeSeparator">
 	  <menupopup>
         <menuitem label="Settings" 

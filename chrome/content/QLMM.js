@@ -90,10 +90,6 @@ QLMM.fileExists = function (f) {
 
 QLMM.debug = function () {
 	QLMM.dQueue.push(arguments);
-	/*var win = QLMM.win;
-	if (win && win.console && win.console.log) {	
-		win.console.log.apply(win.console, arguments);
-	}*/
 };
 
 
@@ -149,8 +145,6 @@ QLMM.init = function (d, w) {
 	QLMM.win.QLMM = QLMM;
 
 	QLMM.debug("[QLMM] Website loaded");
-
-	// possibly add checks for new maps here
 	
 	QLMM.run();
 };
@@ -211,27 +205,7 @@ QLMM.isMapPathSet = function() {
 
 
 QLMM.getMapsPath = function() {
-	var mapPath = QLMM.settingsPath();
-	mapPath.append("maps_path");
-	
-	// |file| is nsIFile
-	var data = "";
-	var fstream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
-		Components.interfaces.nsIFileInputStream);
-	var cstream = Components.classes["@mozilla.org/intl/converter-input-stream;1"].createInstance(
-		Components.interfaces.nsIConverterInputStream);
-	
-	fstream.init(mapPath, -1, 0, 0);
-	cstream.init(fstream, "UTF-8", 0, 0); // you can use another encoding here if you wish
-
-	let (str = {}) {
-	  cstream.readString(-1, str); // read the whole file and put it in str.value
-	  data = str.value;
-	}
-	
-	cstream.close(); // this closes fstream
-	
-	return data;
+	return QLMM.getPrefValue("maps_path");
 };
 
 
@@ -305,7 +279,7 @@ QLMM.directory.chrome = function () {
 }();
 
 
-QLMM.getFileContent = function() {
+QLMM.getChromeFileContent = function() {
 	var path = QLMM.directory.chrome;
 	
 	return function(name) {
@@ -317,22 +291,30 @@ QLMM.getFileContent = function() {
 
 		file.initWithPath(path + name);
 
-		// Try to open up a file stream for the file
-		inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
-			Components.interfaces.nsIFileInputStream);
-
-		// Append the file to the input stream
-		inputStream.init(file, 0x01, 00004, null);
-
-		// Finally *phew*, read the contents
-		sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
-			Components.interfaces.nsIScriptableInputStream);
-
-		sInputStream.init(inputStream);
-
-		return sInputStream.read(sInputStream.available()) || "";
+		return QLMM.readFile(file);
 	}
 }();
+
+
+QLMM.readFile = function(file) {
+	var inputStream, sInputStream;
+	
+	// Try to open up a file stream for the file
+	inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
+		Components.interfaces.nsIFileInputStream);
+
+	// Append the file to the input stream
+	inputStream.init(file, 0x01, 00004, null);
+
+	// Finally *phew*, read the contents
+	sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
+		Components.interfaces.nsIScriptableInputStream);
+
+	sInputStream.init(inputStream);
+
+	return sInputStream.read(sInputStream.available()) || "";
+}
+
 
 QLMM.getMapConfigFileContent = function() {
 	var path = QLMM.mapConfigsPath();
@@ -347,32 +329,9 @@ QLMM.getMapConfigFileContent = function() {
 	
 		QLMM.debug("[QLMM] opening map config file: " + file.path);
 
-		// Try to open up a file stream for the file
-		var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(
-			Components.interfaces.nsIFileInputStream);
-		
-		// Append the file to the input stream
-		inputStream.init(file, 0x01, 00004, null);
-		
-		// Finally *phew*, read the contents
-		var sInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(
-				Components.interfaces.nsIScriptableInputStream);
-				
-		sInputStream.init(inputStream);
-
-		return sInputStream.read(sInputStream.available()) || "";
+		return QLMM.readFile(file);
 	}
 }();
-
-
-QLMM.loadLastGame = function() {
-	// TODO: load last game and map if exits
-};
-
-
-QLMM.saveGameOptions = function() {
-	// TODO: save map, bsp and game options
-};
 
 
 QLMM.chomp = function(raw_text) {

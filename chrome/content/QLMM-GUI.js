@@ -1,8 +1,8 @@
 /**
  *
  */
-QLMM.style = "<style type=\"text/css\">" + QLMM.getFileContent("QLMM.css") + '</style>';
-QLMM.html = QLMM.getFileContent("QLMM.html");
+QLMM.style = "<style type=\"text/css\">" + QLMM.getChromeFileContent("QLMM.css") + '</style>';
+QLMM.html = QLMM.getChromeFileContent("QLMM.html");
 
 
 /**
@@ -78,44 +78,79 @@ QLMM.updateDocumentBinds = function() {
 			}
 			
 			$('#qlmm-map-count').text('Maps Installed: ' + mapCount);
-			
 			$('#qlmm-game-limit-label').css('display', 'none');
-		
 			$('#qlmm-maps-select').append(mapOptions);
-		
-			$('#qlmm-game-type-select').change(function() {
-				var gameTypeSelect = $('#qlmm-game-type-select')[0];
-			
-				switch (gameTypeSelect.options[gameTypeSelect.selectedIndex].text) {
-					case "Single Player":
-						QLMM.singlePlayerSelected();
-						break;
-						
-					case "Duel":
-						QLMM.duelSelected();
-						break;
-					
-					case "Free For All":
-						QLMM.ffaSelected();
-						break;
-					
-					case "Team Death Match":
-						QLMM.tdmSelected();
-						break;
-				
-					case "Clan Arena":
-						QLMM.caSelected();
-						break;
-					
-					case "Capture The Flag":
-						QLMM.ctfSelected();
-						break;
-				}
-			});
-			
+			$('#qlmm-maps-select').change(QLMM.selectedMapChanged);
+			$('#qlmm-game-type-select').change(QLMM.selectedGameTypeChanged);
 			$('#qlmm-start').click(QLMM.startOfflineMap);
 		}
 	});
+};
+
+
+QLMM.selectedGameTypeChanged = function() {
+	var $ = QLMM.$;
+	var gameTypeSelect = $('#qlmm-game-type-select')[0];
+
+	switch (gameTypeSelect.options[gameTypeSelect.selectedIndex].text) {
+		case "Single Player":
+			QLMM.singlePlayerSelected();
+			break;
+			
+		case "Duel":
+			QLMM.duelSelected();
+			break;
+		
+		case "Free For All":
+			QLMM.ffaSelected();
+			break;
+		
+		case "Team Death Match":
+			QLMM.tdmSelected();
+			break;
+	
+		case "Clan Arena":
+			QLMM.caSelected();
+			break;
+		
+		case "Capture The Flag":
+			QLMM.ctfSelected();
+			break;
+	}
+};
+
+
+QLMM.selectedMapChanged = function() {
+	var $ = QLMM.$;
+	var mapInfo = $('#qlmm-maps-select')[0].value;
+	
+	var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
+		Components.interfaces.nsILocalFile);
+	file = QLMM.settingsPath();
+	
+	file.append(mapInfo + ".txt");	
+	if (file.exists()) {
+		var game = QLMM.Game.fromFile(file);
+		QLMM.loadLastGame(game);
+	}
+}
+
+
+QLMM.loadLastGame = function(game) {
+	var $ = QLMM.$;
+	
+	$('#qlmm-game-type-select').val(game.gametype);
+	QLMM.selectedGameTypeChanged();
+	$('#qlmm-time-limit-select').val(game.timelimit);
+	$('#qlmm-players-select').val(game.players);
+	$('#qlmm-difficulty-select').val(game.difficulty);
+	$('#qlmm-game-limit-select').val(game.gamelimit);
+	$('#qlmm-bot-thinktime').val(game.botThinktime);
+	$('#qlmm-sv-fps').val(game.serverFps);
+	$('#qlmm-cheats-enabled').attr('checked', game.cheatsEnabled === "true");
+	$('#qlmm-bot-challenge').attr('checked', game.botChallenge === "true");
+	$('#qlmm-bot-rocketjump').attr('checked', game.botRocketJump === "true");
+	$('#qlmm-allow-kill').attr('checked', game.allowKill === "true");
 };
 
 
@@ -253,10 +288,27 @@ QLMM.startOfflineMap = function(e) {
 	
 	cmdString += QLMM.processAdvancedOptions();
 	cmdString += botCmd;
-	cmdString += ' +wait';
+	cmdString += ' +wait ';
 	
 	var gameCmd = QLMM.win.BuildCmdString() + cmdString;
 	
+	QLMM.debug("[QLMM] saving game options");
+	var game = new QLMM.Game(gameTypeSelect.options[gameTypeSelect.selectedIndex].value,
+		pk3File,
+		mapName,
+		timeLimit,
+		botCount,
+		skill,
+		$('#qlmm-game-limit-select').val(),
+		($('#qlmm-bot-thinktime').val() === "") ? 100 : $('#qlmm-bot-thinktime').val(),
+		($('#qlmm-sv-fps').val() === "") ? 30 : $('#qlmm-sv-fps').val(),
+		$('#qlmm-cheats-enabled').is(':checked'),
+		$('#qlmm-bot-challenge').is(':checked'),
+		$('#qlmm-bot-rocketjump').is(':checked'),
+		$('#qlmm-allow-kill').is(':checked'));
+	
+	game.toFile();
+		
 	QLMM.debug('[QLMM] launch command: ' + gameCmd);
 	QLMM.win.LaunchGame(gameCmd, true);
 };
@@ -293,7 +345,7 @@ QLMM.processAdvancedOptions = function() {
 };
 
 
-QLMM.gameLimitCommand = function() {
+QLMM.gameLimitCommand = function() {	
 	var $ = QLMM.$;
 	var labelText = $('#qlmm-game-limit-label').text();
 	var limit = $('#qlmm-game-limit-select').val();
