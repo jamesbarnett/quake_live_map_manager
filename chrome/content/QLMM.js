@@ -241,16 +241,24 @@ QLMM.getInstalledMapLaunchNames = function() {
 	var pk3ToMaps = new QLMM.Pk3ToMapHash();
 		
 	for (var i = 0; i < pk3list.length; i++) {
-		if (pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt") !== 'lsdm17_blue_textures.pk3.maps.txt' &&
-		    pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt") !== 'lvl_twctf.maps.txt')	{
-			var contents = QLMM.getMapConfigFileContent(pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt"));
+		var fileName = pk3list[i].leafName.replace(/\.pk3$/i, ".maps.txt")
+		if (fileName !== 'lsdm17_blue_textures.pk3.maps.txt' && fileName !== 'lvl_twctf.maps.txt')	{
+			
+			var contents = QLMM.getMapConfigFileContent(fileName);
 	
 			pk3ToMaps.insertItem(pk3list[i].leafName, new Array());
 			
-			var maps = QLMM.chomp(contents).split("\n");
+			if (contents !== '') {	
+				var maps = QLMM.chomp(contents).split("\n");
 	
-			for (var j = 0; j < maps.length; j++) {
-				pk3ToMaps.getItem(pk3list[i].leafName).push(maps[j]);
+				for (var j = 0; j < maps.length; j++) {
+					pk3ToMaps.getItem(pk3list[i].leafName).push(maps[j]);
+				}
+			}
+			else
+			{
+				// No config file for map, assume pk3 and bsp have the same name
+				pk3ToMaps.getItem(pk3list[i].leafName).push(pk3list[i].leafName.replace(/\.pk3$/i, ''));
 			}
 		}
 	}
@@ -320,16 +328,22 @@ QLMM.getMapConfigFileContent = function() {
 	var path = QLMM.mapConfigsPath();
 		
 	return function(name) {
-		// Create the file and instantiate it with the path built above
-		var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
-			Components.interfaces.nsILocalFile);
+		try {
+			// Create the file and instantiate it with the path built above
+			var file = Components.classes["@mozilla.org/file/local;1"].createInstance(
+				Components.interfaces.nsILocalFile);
 	
-		file.initWithPath(path.path);
-		file.append(name);
+			file.initWithPath(path.path);
+			file.append(name);
 	
-		QLMM.debug("[QLMM] opening map config file: " + file.path);
+			QLMM.debug("[QLMM] opening map config file: " + file.path);
 
-		return QLMM.readFile(file);
+			return QLMM.readFile(file);
+		}
+		catch (e) {
+			QLMM.debug('[QLMM] getMapConfigFileContent exception, file: ' + name + ', exception ' + e);
+			return '';
+		}
 	}
 }();
 
