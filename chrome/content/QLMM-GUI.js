@@ -1,26 +1,22 @@
 /**
- *
- */
-QLMM.style = "<style type=\"text/css\">" + QLMM.getChromeFileContent("QLMM.css") + '</style>';
-QLMM.html = QLMM.getChromeFileContent("QLMM.html");
-
-
-/**
  * run()
  * Will initiate the injection of the actual GUI, position the elements and so
  * forth.
  */
-QLMM.run = function () {
+QLMM.run = function() {
 	var $ = QLMM.$, win = QLMM.win, $qlmm = $('#qlmm-menu-link');
+
+	QLMM.style = "<style type=\"text/css\">" + QLMM.getChromeFileContent("QLMM.css") + '</style>';
+	QLMM.html = QLMM.getChromeFileContent("QLMM.html");
 
 	if (!QLMM.isStarted) {
 		QLMM.isStarted = true;
 		window.setInterval(QLMM.run, 250);
 	}
 	else if ($('#qlv_userInfo .WelcomeText').get(0) && !$qlmm.length) {
-		QLMM.debug("[QLMM] Content seems loaded, we can add the QLMM GUI");
+		//QLMM.debug("[QLMM] Content seems loaded, we can add the QLMM GUI");
 		$(QLMM.style).appendTo('head');
-			
+
 		$('#qlv_topLinks').prepend('<a id="qlmm-menu-link" href="javascript:;">Map Manager</a> | ');
 
 		QLMM.updateDocumentBinds();
@@ -265,6 +261,10 @@ QLMM.startOfflineMap = function(e) {
 	var cmdString = '+com_backgroundDownload 1 +sv_quitOnExitLevel 1 ';
 	cmdString += '+g_gametype ' + gameTypeSelect.options[gameTypeSelect.selectedIndex].value + ' ';
     
+	if (gameTypeSelect.options[gameTypeSelect.selectedIndex].text == 'Clan Arena') {
+		cmdString += ' +dmflags 28 ';
+	}
+	
 	var mapCmd = ($('#qlmm-cheats-enabled').is(':checked')) ? '+devmap' : '+map';
     var mapSelect = $('#qlmm-maps-select')[0];
     var mapInfo = mapSelect.value;

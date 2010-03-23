@@ -271,7 +271,7 @@ QLMM.getInstalledMapLaunchNames = function() {
  * Find the path for the extension, e.g.
  * /home/user/.mozilla/firefox/<profile>/extensions/qlmapmngr@gmail.com or equivalent.
  */
-QLMM.directory.chrome = function () {
+QLMM.directory.chrome = function() {
 	// Get initial path to the QLDP extension
 	var path = Components.classes["@mozilla.org/extensions/manager;1"]
 		.getService(Components.interfaces.nsIExtensionManager)
