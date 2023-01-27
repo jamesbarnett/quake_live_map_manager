@@ -1,7 +1,7 @@
 The goal of the Quake Live Map Manager is to making playing unofficial Quake 
 Live maps in practice mode simple.  Playing these unofficial maps is possible
 now, but quite cumbersome.  First you must copy the maps to the correct Quake
-Live folder and then set the map file to read only.  Furthermore, if you want
+Live folder, and then set the map file to read only.  Furthermore, if you want
 to play many different unofficial maps, you must be careful to not copy too
 many maps to the folder simultaneously (Some users have reported browser/plugin
 crashes in this situation).  Then you must start a practice match specifying
